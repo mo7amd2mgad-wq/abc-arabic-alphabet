@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ABC أبجد – Alphabet Fun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EAF8FF;--hd:#2B2D42;--ink:#2B2D42;--y:#FFD23F;--b:#7ED8F6;--m:#7EF0C0;--c:#FF8A7A;--card:#fff;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html[data-eye]{--bg:#FBF0D9}
+@media (prefers-color-scheme:dark){:root:not([data-eye]){--bg:#232649;--hd:#fff}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Fredoka','Cairo',sans-serif;transition:background .4s}
+html[lang=ar] body{font-family:'Cairo','Fredoka',sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px clamp(12px,3vw,32px)}
+h1{margin:0;font-size:clamp(1.5rem,5vw,2.4rem);color:var(--hd)}
+.bar{display:flex;flex-wrap:wrap;gap:10px}
+.btn,.seg button{font:inherit;font-weight:700;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;box-shadow:0 4px 0 var(--ink);transition:transform .1s,box-shadow .1s}
+.btn:active,.seg button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn:focus-visible,.seg button:focus-visible,.card:focus-visible{outline:4px solid #2563eb;outline-offset:3px}
+.seg{display:flex;border:3px solid var(--ink);border-radius:999px;overflow:hidden;box-shadow:0 4px 0 var(--ink);background:#fff}
+.seg button{border:0;border-radius:0;box-shadow:none;background:#fff}
+.seg button[aria-pressed=true]{background:var(--y)}
+.eye[aria-pressed=true]{background:#F6D9A0}
+main{padding:8px clamp(12px,3vw,32px) 40px;max-width:1100px;margin:auto}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.card{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:var(--ink);border:3px solid var(--ink);border-radius:26px;box-shadow:0 6px 0 var(--ink);cursor:pointer}
+.c0{background:var(--y)}.c1{background:var(--b)}.c2{background:var(--m)}.c3{background:var(--c)}
+.card .L{font-size:clamp(2.2rem,8vw,3.3rem);font-weight:800;line-height:1.1}
+.card .E{font-size:1.6rem}
+.pop{animation:pop .5s}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.18) rotate(-4deg)}60%{transform:scale(.94) rotate(3deg)}100%{transform:scale(1)}}
+.shake{animation:shake .5s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.quiz{text-align:center}
+.score{display:inline-block;margin:6px 0;padding:6px 18px;background:#fff;border:3px solid var(--ink);border-radius:999px;font-weight:700}
+.prompt{font-size:clamp(1.5rem,5vw,2.4rem);font-weight:800;margin:10px 0 20px;color:var(--hd)}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:620px;margin:auto}
+.opts .card{aspect-ratio:1/1.1}.opts .L{font-size:clamp(3rem,13vw,5.5rem)}
+.ov{position:fixed;inset:0;background:rgba(43,45,66,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.on{display:flex}
+.panel{width:min(94vw,440px);max-height:94vh;overflow:auto;border:4px solid var(--ink);border-radius:32px;box-shadow:0 8px 0 var(--ink);padding:20px;text-align:center;background:var(--y)}
+.panel .big{font-size:clamp(6rem,30vw,9rem);font-weight:800;line-height:1}
+.panel .emo{font-size:5rem;animation:bob 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) scale(1.08)}}
+.panel .word{font-size:2rem;font-weight:800;margin:6px 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.pad{position:relative;width:min(80vw,340px);aspect-ratio:1;margin:8px auto;background:#fff;border:3px dashed var(--ink);border-radius:20px;overflow:hidden}
+.guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(62vw,250px);font-weight:800;color:rgba(43,45,66,.13);pointer-events:none;user-select:none}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.sw{width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);cursor:pointer;padding:0}
+.sw[aria-pressed=true]{outline:4px solid #2563eb;outline-offset:2px}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;z-index:40;display:none;max-width:90vw;text-align:center}
+#badge{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:30;background:#fff;border:4px solid var(--ink);border-radius:30px;padding:14px 28px;font-size:2rem;font-weight:800;box-shadow:0 8px 0 var(--ink);pointer-events:none}
+#badge.on{animation:badge 1.5s forwards}
+@keyframes badge{15%{transform:translate(-50%,-50%) scale(1.15)}30%{transform:translate(-50%,-50%) scale(1)}85%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(.8);opacity:0}}
+.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:25;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Language"><button data-lang="ar">العربية</button><button data-lang="en">English</button></div>
+    <div class="seg" role="group" aria-label="Mode"><button data-mode="learn" id="mLearn"></button><button data-mode="quiz" id="mQuiz"></button></div>
+    <button class="btn" id="traceBtn"></button>
+    <button class="btn eye" id="eyeBtn" aria-pressed="false"></button>
+  </div>
+</header>
+<main id="main"></main>
+
+<!-- Focus view -->
+<div class="ov" id="focus" role="dialog" aria-modal="true"><div class="panel" id="fp">
+  <div class="big" id="fL"></div><div class="emo" id="fE"></div><div class="word" id="fW"></div>
+  <div class="row"><button class="btn" id="fReplay"></button><button class="btn" id="fTrace"></button><button class="btn" id="fClose"></button></div>
+</div></div>
+
+<!-- Trace pad -->
+<div class="ov" id="trace" role="dialog" aria-modal="true"><div class="panel" style="background:var(--m)">
+  <div class="word" id="tTitle" style="margin:0"></div>
+  <div class="pad" id="pad"><div class="guide" id="guide"></div><canvas id="cv"></canvas></div>
+  <div class="row" id="sws"></div>
+  <div class="row"><button class="btn" id="tClear"></button><button class="btn" id="tClose"></button></div>
+</div></div>
+
+<div id="badge"></div><div id="toast" role="status"></div>
+
+<script>
+/* ===== DATA: [letter, spoken name, example word, emoji] ===== */
+const AR=[["أ","ألف","أرنب","🐇"],["ب","باء","بطة","🦆"],["ت","تاء","تفاحة","🍎"],["ث","ثاء","ثعلب","🦊"],["ج","جيم","جمل","🐪"],["ح","حاء","حصان","🐴"],["خ","خاء","خروف","🐑"],["د","دال","دجاجة","🐔"],["ذ","ذال","ذرة","🌽"],["ر","راء","روبوت","🤖"],["ز","زاي","زرافة","🦒"],["س","سين","سمكة","🐟"],["ش","شين","شمس","☀️"],["ص","صاد","صقر","🦅"],["ض","ضاد","ضفدع","🐸"],["ط","طاء","طائرة","✈️"],["ظ","ظاء","ظرف","✉️"],["ع","عين","عنب","🍇"],["غ","غين","غيمة","☁️"],["ف","فاء","فيل","🐘"],["ق","قاف","قرد","🐒"],["ك","كاف","كتاب","📖"],["ل","لام","ليمون","🍋"],["م","ميم","موزة","🍌"],["ن","نون","نجمة","⭐"],["ه","هاء","هدية","🎁"],["و","واو","وردة","🌹"],["ي","ياء","يد","✋"]];
+const EN=[["A","A","Apple","🍎"],["B","B","Ball","⚽"],["C","C","Cat","🐱"],["D","D","Dog","🐶"],["E","E","Elephant","🐘"],["F","F","Fish","🐟"],["G","G","Grapes","🍇"],["H","H","House","🏠"],["I","I","Ice cream","🍦"],["J","J","Juice","🧃"],["K","K","Kite","🪁"],["L","L","Lion","🦁"],["M","M","Moon","🌙"],["N","N","Nose","👃"],["O","O","Orange","🍊"],["P","P","Pizza","🍕"],["Q","Q","Queen","👸"],["R","R","Rainbow","🌈"],["S","S","Sun","☀️"],["T","T","Tree","🌳"],["U","U","Umbrella","☂️"],["V","V","Violin","🎻"],["W","W","Whale","🐳"],["X","X","Xylophone","🎹"],["Y","Y","Yo-yo","🪀"],["Z","Z","Zebra","🦓"]];
+const LANGS={
+ ar:{dir:'rtl',speech:'ar-SA',items:AR,ui:{title:'أبجد 🌈',learn:'تعلّم',quiz:'العب وتعلم',trace:'✏️ اكتب الحرف',eye:'👁️ الوضع المريح للعين',replay:'🔊 أعد الصوت',close:'إغلاق',clear:'🧽 مسح',score:'النقاط',great:['أحسنت! 🎉','رائع! 🌟','ممتاز! 👏'],retry:'حاول مرة أخرى، أنت تستطيع! 💪',noSpeech:'الصوت غير مدعوم في هذا المتصفح 🔇',noVoice:'لا يوجد صوت عربي في جهازك. جرّب متصفحاً آخر.',ask:n=>`أين حرف ال${n}؟`,say:n=>`أين حرف ال${n}`,tr:l=>`اكتب حرف ${l}`}},
+ en:{dir:'ltr',speech:'en-US',items:EN,ui:{title:'ABC Fun 🌈',learn:'Learn',quiz:'Play & Learn',trace:'✏️ Trace Letter',eye:'👁️ Eye-Care Mode',replay:'🔊 Replay Sound',close:'Close',clear:'🧽 Clear',score:'Score',great:['Great job! 🎉','Awesome! 🌟','You got it! 👏'],retry:'Try again, you can do it! 💪',noSpeech:'Sound is not supported in this browser 🔇',noVoice:'No English voice found on this device.',ask:n=>`Find the letter ${n}`,say:n=>`Find the letter ${n}`,tr:l=>`Trace the letter ${l}`}}
+};
+const $=id=>document.getElementById(id);
+const S={lang:'ar',mode:'learn',cur:0,score:0,target:null,locked:false};
+const L=()=>LANGS[S.lang], T=()=>L().ui;
+const disp=it=>S.lang==='en'?it[0]+it[0].toLowerCase():it[0];
+
+/* ===== SPEECH (Web Speech API with graceful fallback) ===== */
+let voices=[];
+const supported='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+function loadVoices(){if(supported)voices=speechSynthesis.getVoices()}
+if(supported){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function speak(parts){
+  if(!supported){toast(T().noSpeech);return}
+  speechSynthesis.cancel();
+  const code=L().speech, base=code.slice(0,2);
+  const v=voices.find(v=>v.lang.replace('_','-')===code)||voices.find(v=>v.lang.toLowerCase().startsWith(base));
+  if(!v&&voices.length&&base==='ar')toast(T().noVoice);
+  [].concat(parts).forEach(p=>{
+    const u=new SpeechSynthesisUtterance(p);
+    u.lang=code;if(v)u.voice=v;u.rate=.8;u.pitch=1.15;
+    speechSynthesis.speak(u);
+  });
+}
+let tt;
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',3200)}
+
+/* ===== RENDER ===== */
+function render(){
+  const l=L(),u=T();
+  document.documentElement.lang=S.lang;document.documentElement.dir=l.dir;
+  $('title').textContent=u.title;$('mLearn').textContent=u.learn;$('mQuiz').textContent=u.quiz;
+  $('traceBtn').textContent=u.trace;$('eyeBtn').textContent=u.eye;
+  $('fReplay').textContent=u.replay;$('fTrace').textContent=u.trace;
+  ['fClose','tClose'].forEach(i=>$(i).textContent=u.close);$('tClear').textContent=u.clear;
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===S.lang));
+  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));
+  S.mode==='learn'?renderLearn():newRound();
+}
+function renderLearn(){
+  $('main').innerHTML='<div class="grid">'+L().items.map((it,i)=>
+   `<button class="card c${i%4}" data-i="${i}" aria-label="${it[1]} – ${it[2]}"><span class="L">${disp(it)}</span><span class="E">${it[3]}</span></button>`).join('')+'</div>';
+}
+function bounce(node){node.classList.remove('pop','shake');void node.offsetWidth;node.classList.add('pop')}
+
+/* ===== FOCUS VIEW ===== */
+function openFocus(i){
+  S.cur=i;const it=L().items[i];
+  $('fL').textContent=disp(it);$('fE').textContent=it[3];$('fW').textContent=it[2];
+  $('fp').style.background=['var(--y)','var(--b)','var(--m)','var(--c)'][i%4];
+  $('focus').classList.add('on');$('fClose').focus();
+  sayLetter(i);
+}
+const sayLetter=i=>{const it=L().items[i];speak(S.lang==='en'?[it[1],it[2]]:[it[1],it[2]])};
+const closeOv=id=>{$(id).classList.remove('on');if(supported)speechSynthesis.cancel()};
+
+/* ===== QUIZ ===== */
+function newRound(){
+  const items=L().items,n=items.length;S.locked=false;
+  let t;do{t=Math.floor(Math.random()*n)}while(t===S.target&&n>1);S.target=t;
+  const ids=[t];while(ids.length<3){const r=Math.floor(Math.random()*n);if(!ids.includes(r))ids.push(r)}
+  ids.sort(()=>Math.random()-.5);
+  const u=T();
+  $('main').innerHTML=`<div class="quiz"><div class="score">⭐ ${u.score}: <span id="sc">${S.score}</span></div>
+   <div class="prompt" id="pr">${u.ask(items[t][1])}</div>
+   <button class="btn" id="qReplay">${u.replay}</button><br><br>
+   <div class="opts">${ids.map(i=>`<button class="card c${i%4}" data-q="${i}"><span class="L">${disp(items[i])}</span></button>`).join('')}</div></div>`;
+  speak(u.say(items[t][1]));
+}
+function answer(btn){
+  if(S.locked)return;const i=+btn.dataset.q;
+  if(i===S.target){
+    S.locked=true;S.score++;$('sc').textContent=S.score;bounce(btn);confetti();
+    const msg=T().great[Math.floor(Math.random()*3)];
+    const b=$('badge');b.textContent=msg;b.classList.remove('on');void b.offsetWidth;b.classList.add('on');
+    speak(msg.replace(/[^\p{L}\s!]/gu,''));setTimeout(newRound,2200);
+  }else{
+    btn.classList.remove('pop','shake');void btn.offsetWidth;btn.classList.add('shake');
+    toast(T().retry);speak(T().retry.replace(/[^\p{L}\s!,،]/gu,''));
+  }
+}
+function confetti(){
+  const cols=['#FFD23F','#7ED8F6','#7EF0C0','#FF8A7A','#fff'];
+  for(let k=0;k<50;k++){
+    const d=document.createElement('div');d.className='conf';
+    d.style.left=Math.random()*100+'vw';d.style.background=cols[k%5];
+    d.style.animationDuration=(1.6+Math.random()*1.4)+'s';d.style.animationDelay=Math.random()*.4+'s';
+    document.body.appendChild(d);setTimeout(()=>d.remove(),3600);
+  }
+}
+
+/* ===== TRACING PAD ===== */
+const cv=$('cv'),ctx=cv.getContext('2d');let color='#2B2D42',drawing=false;
+const COLORS=['#2B2D42','#E63946','#2563EB','#16A34A','#F59E0B','#9333EA'];
+$('sws').innerHTML=COLORS.map((c,i)=>`<button class="sw" style="background:${c}" data-c="${c}" aria-label="color ${i+1}" aria-pressed="${i===0}"></button>`).join('');
+function openTrace(i){
+  if(typeof i==='number')S.cur=i;
+  const it=L().items[S.cur];
+  $('tTitle').textContent=T().tr(it[0]);$('guide').textContent=it[0];
+  $('trace').classList.add('on');
+  const r=$('pad').getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  cv.width=r.width*dpr;cv.height=r.height*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap=ctx.lineJoin='round';ctx.lineWidth=14;
+}
+function pos(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+/* Pointer events cover mouse, touch (touchstart/touchmove) and pen; touch-action:none stops page scrolling */
+cv.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;cv.setPointerCapture(e.pointerId);
+  const[x,y]=pos(e);ctx.strokeStyle=color;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+.1,y+.1);ctx.stroke()});
+cv.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const[x,y]=pos(e);ctx.lineTo(x,y);ctx.stroke()});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>drawing=false));
+$('tClear').onclick=()=>ctx.clearRect(0,0,cv.width,cv.height);
+$('sws').onclick=e=>{const b=e.target.closest('.sw');if(!b)return;color=b.dataset.c;
+  document.querySelectorAll('.sw').forEach(s=>s.setAttribute('aria-pressed',s===b))};
+
+/* ===== EVENTS ===== */
+$('main').addEventListener('click',e=>{
+  const c=e.target.closest('.card');
+  if(c&&c.dataset.i!==undefined){bounce(c);setTimeout(()=>openFocus(+c.dataset.i),250)}
+  else if(c&&c.dataset.q!==undefined)answer(c);
+  else if(e.target.id==='qReplay')speak(T().say(L().items[S.target][1]));
+});
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{S.lang=b.dataset.lang;S.cur=0;S.target=null;if(supported)speechSynthesis.cancel();render()});
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;render()});
+$('eyeBtn').onclick=e=>{const on=document.documentElement.toggleAttribute('data-eye');e.currentTarget.setAttribute('aria-pressed',on)};
+$('traceBtn').onclick=()=>openTrace();
+$('fReplay').onclick=()=>sayLetter(S.cur);
+$('fTrace').onclick=()=>{closeOv('focus');openTrace(S.cur)};
+$('fClose').onclick=()=>closeOv('focus');$('tClose').onclick=()=>closeOv('trace');
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeOv(o.id)}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')['focus','trace'].forEach(closeOv)});
+
+render();
+</script>
+</body>
+</html>
